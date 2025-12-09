@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router";
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
     width: 100vw;
     height: 100dvh;
     display: flex;
@@ -11,7 +11,7 @@ const Wrapper = styled.div`
     background-color: #f5f5f5;
 `;
 
-const Card = styled.div`
+export const Card = styled.div`
     width: 100%;
     max-width: 350px;
     padding: 40px 32px;
@@ -21,7 +21,7 @@ const Card = styled.div`
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 `;
 
-const Title = styled.h1`
+export const Title = styled.h1`
     font-size: 26px;
     text-align: center;
     margin-top: 0;
