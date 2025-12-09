@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { type FormEvent, useState } from "react";
+import { useNavigate } from "react-router";
 
 const Wrapper = styled.div`
     width: 100vw;
@@ -43,7 +45,7 @@ const Input = styled.input`
     border-radius: 10px;
     border: 1px solid #dddddd;
     font-size: 16px;
-    
+
     &:focus {
         outline: none;
         border-color: #6c5ce7;
@@ -65,35 +67,58 @@ const Button = styled.button`
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    
+
     &:hover {
         background-color: #574bd6;
     }
 `;
 
 function SignUp() {
+    const navigate = useNavigate();
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+
+    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+
+        // /result 이동을 시킴
+        // queryString을 통해 지금 준비된 state의 값을 전달해줘야 함
+        // navigate(`/result?username=${username}&password=${password}&name=${name}&email=${email}`);
+
+        // 전달해야 하는 데이터가 담긴 객체를 준비
+        const data = { username, password, name, email };
+        // new URLSearchParams(data) 를 통해 객체를 쿼리스트링으로 변환 후, string으로 변환
+        const queryString = new URLSearchParams(data).toString();
+        navigate(`/result?${queryString}`);
+    };
+
     return (
         <Wrapper>
             <Card>
                 <Title>회원가입</Title>
 
-                <Form>
+                <Form onSubmit={onSubmit}>
                     <InputGroup>
-                        <Input placeholder={"아이디"} />
+                        <Input placeholder={"아이디"} onChange={e => setUsername(e.target.value)} />
                         <ErrorText>에러메세지</ErrorText>
                     </InputGroup>
                     <InputGroup>
                         <Input
                             type={"password"}
-                            placeholder={"비밀번호"} />
+                            placeholder={"비밀번호"}
+                            onChange={e => setPassword(e.target.value)}
+                        />
                         <ErrorText>에러메세지</ErrorText>
                     </InputGroup>
                     <InputGroup>
-                        <Input placeholder={"이름"} />
+                        <Input placeholder={"이름"} onChange={e => setName(e.target.value)} />
                         <ErrorText>에러메세지</ErrorText>
                     </InputGroup>
                     <InputGroup>
-                        <Input placeholder={"이메일"} />
+                        <Input placeholder={"이메일"} onChange={e => setEmail(e.target.value)} />
                         <ErrorText>에러메세지</ErrorText>
                     </InputGroup>
                     <Button>회원가입</Button>
