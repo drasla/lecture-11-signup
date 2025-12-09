@@ -73,6 +73,11 @@ const Button = styled.button`
     }
 `;
 
+// 객체 타입을 지정하는데, 어떠한 키가 들어올지 모르고 몇 개가 들어올지도 모를 때
+type ErrorType = {
+    [key: string]: string;
+};
+
 function SignUp() {
     const navigate = useNavigate();
 
@@ -81,9 +86,30 @@ function SignUp() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
 
+    const [errors, setErrors] = useState<ErrorType>({});
+
+    // validate() 를 실행했을 때 에러가 있다면 true, 에러가 없다면 false가 반환
+    const validate = () => {
+        const newErrors: ErrorType = {};
+
+        if (!username) newErrors.username = "아이디를 입력해주세요.";
+        if (!password) newErrors.password = "비밀번호를 입력해주세요.";
+        else if (password.length < 6) newErrors.password = "비밀번호는 최소 6자 이상이어야 합니다.";
+        if (!name) newErrors.name = "이름을 입력해주세요.";
+        if (!email) newErrors.email = "이메일을 입력해주세요.";
+        // string 값에 대해서 특정한 조건을 판별할 때 사용하는 것 -> 정규식
+        else if (!/^\S+@\S+\.\S+$/.test(email)) newErrors.email = "올바른 이메일 형식이 아닙니다.";
+
+        setErrors(newErrors);
+        // 지금 만들어진 이 객체 newErrors에, 키가 존재하지 않으면, true 반환
+        // Object.keys(객체) : 이 객체가 가지고 있는 키를 Array 형태로 반환
+        return Object.keys(newErrors).length === 0;
+    };
+
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
+        // validate()가 하나라도 실패해서 false가 반환되면, onSubmit 종료 처리
+        if (!validate()) return;
         // /result 이동을 시킴
         // queryString을 통해 지금 준비된 state의 값을 전달해줘야 함
         // navigate(`/result?username=${username}&password=${password}&name=${name}&email=${email}`);
@@ -103,7 +129,7 @@ function SignUp() {
                 <Form onSubmit={onSubmit}>
                     <InputGroup>
                         <Input placeholder={"아이디"} onChange={e => setUsername(e.target.value)} />
-                        <ErrorText>에러메세지</ErrorText>
+                        {errors.username && <ErrorText>{errors.username}</ErrorText>}
                     </InputGroup>
                     <InputGroup>
                         <Input
@@ -111,15 +137,15 @@ function SignUp() {
                             placeholder={"비밀번호"}
                             onChange={e => setPassword(e.target.value)}
                         />
-                        <ErrorText>에러메세지</ErrorText>
+                        {errors.password && <ErrorText>{errors.password}</ErrorText>}
                     </InputGroup>
                     <InputGroup>
                         <Input placeholder={"이름"} onChange={e => setName(e.target.value)} />
-                        <ErrorText>에러메세지</ErrorText>
+                        {errors.name && <ErrorText>{errors.name}</ErrorText>}
                     </InputGroup>
                     <InputGroup>
-                        <Input placeholder={"이메일"} onChange={e => setEmail(e.target.value)} />
-                        <ErrorText>에러메세지</ErrorText>
+                        <Input type={"email"} placeholder={"이메일"} onChange={e => setEmail(e.target.value)} />
+                        {errors.email && <ErrorText>{errors.email}</ErrorText>}
                     </InputGroup>
                     <Button>회원가입</Button>
                 </Form>
